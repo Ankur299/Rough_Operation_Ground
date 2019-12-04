@@ -19,14 +19,14 @@ public:
 	UPROPERTY(EditAnywhere,  Category = Structure)
 		class UStaticMeshComponent* WeaponMesh;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Structure)
+		class UBoxComponent*  BoxComponent;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	
 
-
-	UPROPERTY(EditAnywhere, Category = Structure)
-		class UBoxComponent*  BoxComponent;
 
 
 
@@ -38,5 +38,6 @@ public:
 		bool bPicked;
 	UPROPERTY(EditAnywhere, Category = Type)
 		int32 Type;
+	bool bOverlapAllowed;
 
 };

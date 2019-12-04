@@ -30,7 +30,7 @@ AMCharacter::AMCharacter()
 
 	SpeedMultiplier = 0.67f;
 	
-	
+	bOverlapedWithWeapon = false;
 
 }
 
@@ -66,54 +66,48 @@ void AMCharacter::UnCrouching()
 void AMCharacter::WeaponChange()
 {
 	//if nothing is in hand
-	if (bOverlapedWithWeapon && !CurrentWeapon) {
-		OverlapingWeapon = Cast<AMweapon>(OverlapingWeapon);
-		if (OverlapingWeapon) {
+	if (CurrentWeapon && !bOverlapedWithWeapon) {
 
-			WeaponEquip(OverlapingWeapon);
+		WeaponUnEquip(CurrentWeapon);
 
-			//Checks what weapons to be equiped
-			if (OverlapingWeapon->Type == 1 ) {
-				if (PrimaryWeapon) {
-					WeaponUnEquip(PrimaryWeapon);
-				}
-				PrimaryWeapon = CurrentWeapon;
-			}
-			else if (OverlapingWeapon->Type == 2) {
-				if (SecondaryWeapon) {
-					WeaponUnEquip(SecondaryWeapon);
-				}
-				SecondaryWeapon = CurrentWeapon;
-			}
-			else {
-				UE_LOG(LogTemp, Error, TEXT("Its's a bomb"));
-			}
-
-		}
-
-	}
-	//if some weapon is in hand
-	else if(CurrentWeapon)
-	{
-
-		UE_LOG(LogTemp, Warning, TEXT("I Want to Drap The Weapon"));
-		
-		OverlapingWeapon = Cast<AMweapon>(OverlapingWeapon);
-
-		if (CurrentWeaponType == OverlapingWeapon->Type) {
-			WeaponUnEquip(CurrentWeapon);
-			WeaponChange();
+		if (CurrentWeaponType == 1) {
+			PrimaryWeapon = NULL;
+			CurrentWeapon = NULL;
+			CurrentWeaponType = 0;
 		}
 		else {
-			ChangeToSlot(CurrentWeapon);
+			SecondaryWeapon = NULL;
 			CurrentWeapon = NULL;
-			WeaponChange();
+			CurrentWeaponType = 0;
 		}
 
+
 	}
-	else {
-		return;
+
+	else if (bOverlapedWithWeapon) {
+		if (CurrentWeapon) {
+			ChangeToSlot(CurrentWeapon);
+		}
+		OverlapingWeapon = Cast<AMweapon>(OverlapingWeapon);
+		WeaponEquip(OverlapingWeapon);
+
+		if (OverlapingWeapon->Type == 1) {
+			if (PrimaryWeapon) {
+				WeaponUnEquip(PrimaryWeapon);
+			}
+			PrimaryWeapon = OverlapingWeapon;
+		}
+		else {
+			if (SecondaryWeapon) {
+				WeaponUnEquip(SecondaryWeapon);
+			}
+			SecondaryWeapon = OverlapingWeapon;
+		}
+
+
 	}
+
+	bOverlapedWithWeapon = false;
 }
 
 void AMCharacter::WeaponEquip(AMweapon * Weapon)
@@ -121,6 +115,7 @@ void AMCharacter::WeaponEquip(AMweapon * Weapon)
 	Weapon->SetOwner(this);
 	Weapon->WeaponMesh->SetSimulatePhysics(false);
 	Weapon->bPicked = true;
+	Weapon->bOverlapAllowed = false;
 	Weapon->AttachToComponent(Cast<USceneComponent>(GetMesh()), FAttachmentTransformRules::SnapToTargetNotIncludingScale, "WeaponSocket");
 	CurrentWeapon = Weapon;
 	CurrentWeaponType = Weapon->Type;
@@ -131,8 +126,8 @@ void AMCharacter::WeaponUnEquip(AMweapon* Weapon)
 	Weapon->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 	Weapon->WeaponMesh->SetSimulatePhysics(true);
 	Weapon->bPicked = false;
+	Weapon->bOverlapAllowed = true;
 	Weapon->SetOwner(NULL);
-	CurrentWeapon = NULL;
 }
 
 void AMCharacter::ChangeToSlot(AMweapon * Weapon)
@@ -161,6 +156,7 @@ void AMCharacter::PrimaryWeaponSwap()
 			WeaponEquip(PrimaryWeapon);
 		}
 		else {
+			
 			ChangeToSlot(CurrentWeapon);
 			CurrentWeapon = NULL;
 			CurrentWeaponType = 0;
@@ -195,7 +191,7 @@ void AMCharacter::OnOverlapBegin(UPrimitiveComponent * OverlappedComp, AActor * 
 
 	OverlapingWeapon = Cast<AMweapon>(OtherActor);
 	if (OverlapingWeapon) {
-		if (!OverlapingWeapon->bPicked) {
+		if (!OverlapingWeapon->bPicked && OverlapingWeapon->bOverlapAllowed) {
 			//Shows only when weapon is not picked by anyone
 			DrawDebugString(GetWorld(), FVector(0.f, 0.f, 100.f), "Press F to PickUp", OtherActor, FColor::White, 2.0f, false, 1.5f);
 			bOverlapedWithWeapon = true;

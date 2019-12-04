@@ -22,7 +22,9 @@ AMweapon::AMweapon()
 	BoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("Overlap_Box"));
 
 	bPicked = false;
+	bOverlapAllowed = true;
 	Type = 1; // # 1 for primary # 2 for secondary and # anything else for Explopsive/etc
+	
 }
 
 // Called when the game starts or when spawned
@@ -39,7 +41,6 @@ void AMweapon::Tick(float DeltaTime)
 	if (GetOwner()) {
 		//DrawDebugString(GetWorld(), FVector(0.f, 0.f, 100.f), GetOwner()->GetName(), this, FColor::White, DeltaTime, 1.5f);
 		
-
 	}
 	else {
 		

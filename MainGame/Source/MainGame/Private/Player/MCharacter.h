@@ -57,9 +57,12 @@ protected:
 	bool bOverlapedWithWeapon; //Checks if Overlaping happed with an weapon or not
 	
 	class AMweapon* OverlapingWeapon;
+	UPROPERTY(BlueprintReadOnly)
 	class AMweapon* CurrentWeapon;
 
+	UPROPERTY(BlueprintReadOnly)
 	class AMweapon* PrimaryWeapon;
+	UPROPERTY(BlueprintReadOnly)
 	class AMweapon* SecondaryWeapon;
 	
 	UPROPERTY(BlueprintReadOnly)
