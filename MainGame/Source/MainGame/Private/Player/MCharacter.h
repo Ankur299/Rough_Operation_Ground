@@ -48,6 +48,8 @@ protected:
 	class AMweapon* Weapon;
 	class AMweapon* CurrentWeapon;
 
+	class AMweapon* Slot1Weapon;
+	class AMweapon* Slot2Weapon;
 
 
 public:	

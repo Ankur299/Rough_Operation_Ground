@@ -77,13 +77,14 @@ void AMCharacter::WeaponEquip()
 	}
 	else if(CurrentWeapon)
 	{
-		CurrentWeapon = Cast<AMweapon>(Weapon);
 		CurrentWeapon->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 		CurrentWeapon->WeaponMesh->SetSimulatePhysics(true);
 		CurrentWeapon->bPicked = false;
 		CurrentWeapon->SetOwner(NULL);
 		CurrentWeapon = NULL;
 		UE_LOG(LogTemp, Warning, TEXT("I Want to Drap The Weapon"));
+		WeaponEquip();
+
 	}
 	else {
 		return;
