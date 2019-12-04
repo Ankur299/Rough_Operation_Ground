@@ -16,7 +16,7 @@ public:
 	AMweapon();
 
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Structure)
+	UPROPERTY(EditAnywhere,  Category = Structure)
 		class UStaticMeshComponent* WeaponMesh;
 
 protected:
@@ -25,7 +25,7 @@ protected:
 	
 
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Structure)
+	UPROPERTY(EditAnywhere, Category = Structure)
 		class UBoxComponent*  BoxComponent;
 
 
@@ -34,7 +34,9 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Action)
+	UPROPERTY(EditDefaultsOnly, Category = Action)
 		bool bPicked;
+	UPROPERTY(EditAnywhere, Category = Type)
+		int32 Type;
 
 };

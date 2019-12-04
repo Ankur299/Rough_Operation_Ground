@@ -21,12 +21,23 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	//Movement
 	void MoveForward(float val);
 	void  MoveRight(float val);
 	void Crouching();
 	void UnCrouching();
 	
-	void WeaponEquip();
+	//Weapon Equiping
+	void WeaponChange();
+	void WeaponEquip(class AMweapon* Weapon);
+	void WeaponUnEquip(class AMweapon* Weapon);
+	void ChangeToSlot(class AMweapon * Weapon);
+
+
+	//Weapon Changing
+	void PrimaryWeaponSwap();  //choosing Primary Weapon Rifle, Shortgun, Snipers
+	void SecondaryWeaponSwap(); //Choosing Secondary Weapons Revolver, SMG etc.
+
 	UFUNCTION()
 	void OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	UFUNCTION()
@@ -45,11 +56,14 @@ protected:
 
 	bool bOverlapedWithWeapon; //Checks if Overlaping happed with an weapon or not
 	
-	class AMweapon* Weapon;
+	class AMweapon* OverlapingWeapon;
 	class AMweapon* CurrentWeapon;
 
-	class AMweapon* Slot1Weapon;
-	class AMweapon* Slot2Weapon;
+	class AMweapon* PrimaryWeapon;
+	class AMweapon* SecondaryWeapon;
+	
+	UPROPERTY(BlueprintReadOnly)
+	int32 CurrentWeaponType;
 
 
 public:	
@@ -60,13 +74,5 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Weapon)
-		bool bEquippedRifle;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Weapon)
-		bool bEquippedGun;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Weapon)
-		bool bFullSlot;
 
 };

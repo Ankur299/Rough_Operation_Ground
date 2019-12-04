@@ -22,6 +22,7 @@ AMweapon::AMweapon()
 	BoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("Overlap_Box"));
 
 	bPicked = false;
+	Type = 1; // # 1 for primary # 2 for secondary and # anything else for Explopsive/etc
 }
 
 // Called when the game starts or when spawned
