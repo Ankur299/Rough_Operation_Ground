@@ -22,26 +22,27 @@ AMweapon::AMweapon()
 	BoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("Overlap_Box"));
 
 	bPicked = false;
-	bDisplayMessage = false;
 }
 
 // Called when the game starts or when spawned
 void AMweapon::BeginPlay()
 { 
 	Super::BeginPlay();
+
+	WeaponMesh->SetSimulatePhysics(true);
 }
 
 void AMweapon::Tick(float DeltaTime)
 {
 
 	if (GetOwner()) {
-		DrawDebugString(GetWorld(), FVector(0.f, 0.f, 100.f), GetOwner()->GetName(), this, FColor::White, DeltaTime, 1.5f);
+		//DrawDebugString(GetWorld(), FVector(0.f, 0.f, 100.f), GetOwner()->GetName(), this, FColor::White, DeltaTime, 1.5f);
 		
 
 	}
 	else {
 		
-		DrawDebugString(GetWorld(), FVector(0.f, 0.f, 100.f), "No Owner", this, FColor::White, DeltaTime, 1.5f);
+		//DrawDebugString(GetWorld(), FVector(0.f, 0.f, 100.f), "No Owner", this, FColor::White, DeltaTime, 1.5f);
 	}
 
 }

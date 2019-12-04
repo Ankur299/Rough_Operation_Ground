@@ -69,7 +69,9 @@ void AMCharacter::WeaponEquip()
 		CurrentWeapon = Cast<AMweapon>(Weapon);
 		if (CurrentWeapon) {
 			CurrentWeapon->SetOwner(this);
+			CurrentWeapon->WeaponMesh->SetSimulatePhysics(false);
 			CurrentWeapon->AttachToComponent(Cast<USceneComponent>(GetMesh()), FAttachmentTransformRules::SnapToTargetNotIncludingScale, "WeaponSocket");
+			CurrentWeapon->bPicked = true;
 		}
 
 	}
@@ -77,7 +79,8 @@ void AMCharacter::WeaponEquip()
 	{
 		CurrentWeapon = Cast<AMweapon>(Weapon);
 		CurrentWeapon->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
-
+		CurrentWeapon->WeaponMesh->SetSimulatePhysics(true);
+		CurrentWeapon->bPicked = false;
 		CurrentWeapon->SetOwner(NULL);
 		CurrentWeapon = NULL;
 		UE_LOG(LogTemp, Warning, TEXT("I Want to Drap The Weapon"));
@@ -94,8 +97,11 @@ void AMCharacter::OnOverlapBegin(UPrimitiveComponent * OverlappedComp, AActor * 
 
 	Weapon = Cast<AMweapon>(OtherActor);
 	if (Weapon) {
-		DrawDebugString(GetWorld(), FVector(0.f, 0.f, 100.f), "Press F to PickUp" , OtherActor, FColor::White, 2.0f, false, 1.5f);
-		bOverlapedWithWeapon = true;
+		if (!Weapon->bPicked) {
+			//Shows only when weapon is not picked by anyone
+			DrawDebugString(GetWorld(), FVector(0.f, 0.f, 100.f), "Press F to PickUp", OtherActor, FColor::White, 2.0f, false, 1.5f);
+			bOverlapedWithWeapon = true;
+		}
 	}
 	else {
 		//Not A Weapon

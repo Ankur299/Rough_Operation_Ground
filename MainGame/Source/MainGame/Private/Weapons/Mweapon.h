@@ -28,14 +28,13 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Structure)
 		class UBoxComponent*  BoxComponent;
 
-	UPROPERTY(BlueprintReadWrite, Category = UI)
-		bool bDisplayMessage;
-	UPROPERTY(BlueprintReadWrite, Category = Action)
-		bool bPicked;
 
 
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Action)
+		bool bPicked;
 
 };
