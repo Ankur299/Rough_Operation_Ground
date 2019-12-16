@@ -9,6 +9,8 @@
 #include "Net/UnrealNetwork.h"
 #include "Components/CapsuleComponent.h"
 #include "Private/Weapons/Mweapon.h"
+#include "TimerManager.h"
+
 #include "DrawDebugHelpers.h" //TODO #remove this after  debugging
 
 // Sets default values
@@ -31,6 +33,9 @@ AMCharacter::AMCharacter()
 	SpeedMultiplier = 0.67f;
 	
 	bOverlapedWithWeapon = false;
+	
+	//Animation
+	Reloading = false;
 
 }
 
@@ -186,6 +191,48 @@ void AMCharacter::SecondaryWeaponSwap()
 	}
 }
 
+void AMCharacter::WeaponFireStart()
+{
+	if (CurrentWeapon) {
+		if (!Reloading) {
+			CurrentWeapon->StartFire();
+		}
+	}
+	else {
+		UE_LOG(LogTemp, Error, TEXT("Weapon not equipped"));
+	}
+}
+
+void AMCharacter::WeaponFireEnd()
+{
+	if (CurrentWeapon) {
+		CurrentWeapon->StopFire();
+	}
+}
+
+void AMCharacter::WeaponReloadEnd()
+{
+	CurrentWeapon->Reload();
+	Reloading = false;
+}
+
+void AMCharacter::WeaponReloadStart()
+{
+	
+	if (CurrentWeapon) {
+		CurrentWeapon->StopFire();
+		if (CurrentWeapon->bAvailableAmmo()) {
+			Reloading = true;
+			GetWorldTimerManager().SetTimer(ReloadTime, this, &AMCharacter::WeaponReloadEnd, 1.f, false, 3.f); //Delay yet to be specified
+		}
+
+		else {
+			UE_LOG(LogTemp, Warning, TEXT("Returning False"));
+		}
+	}
+}
+
+
 void AMCharacter::OnOverlapBegin(UPrimitiveComponent * OverlappedComp, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
 
@@ -240,6 +287,11 @@ void AMCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAction("PickUp", IE_Pressed, this, &AMCharacter::WeaponChange);
 	PlayerInputComponent->BindAction("PrimaryWeapon", IE_Pressed, this, &AMCharacter::PrimaryWeaponSwap);
 	PlayerInputComponent->BindAction("SecondaryWeapon", IE_Pressed, this, &AMCharacter::SecondaryWeaponSwap);
+
+	//WeaponAction
+	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &AMCharacter::WeaponFireStart);
+	PlayerInputComponent->BindAction("Fire", IE_Released, this, &AMCharacter::WeaponFireEnd);
+	PlayerInputComponent->BindAction("Reload", IE_Pressed, this, &AMCharacter::WeaponReloadStart);
 
 }
 
