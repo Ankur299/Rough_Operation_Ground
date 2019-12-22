@@ -10,8 +10,9 @@
 #include "Components/CapsuleComponent.h"
 #include "Private/Weapons/Mweapon.h"
 #include "TimerManager.h"
+#include "Private/Component/ActorHealthComponent.h" 
 
-#include "DrawDebugHelpers.h" //TODO #remove this after  debugging
+#include "DrawDebugHelpers.h" //TODO #removeku,l nijv this after  debugging
 
 // Sets default values
 AMCharacter::AMCharacter()
@@ -29,6 +30,8 @@ AMCharacter::AMCharacter()
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->SetupAttachment(CameraBoom);
 
+	HealthComponent = CreateDefaultSubobject<UActorHealthComponent>(TEXT("Health Component"));
+	OnTakeAnyDamage.AddDynamic(HealthComponent, &UActorHealthComponent::HandleDamage);
 
 	SpeedMultiplier = 0.67f;
 	
@@ -36,6 +39,7 @@ AMCharacter::AMCharacter()
 	
 	//Animation
 	Reloading = false;
+
 
 }
 
@@ -151,7 +155,6 @@ void AMCharacter::ChangeToSlot(AMweapon * Weapon)
 	}
 }
 
-
 //For Changing to primary weapon
 void AMCharacter::PrimaryWeaponSwap()
 {
@@ -232,6 +235,23 @@ void AMCharacter::WeaponReloadStart()
 	}
 }
 
+void AMCharacter::Death()
+{
+	bDied = true;
+
+	GetMovementComponent()->StopMovementImmediately();
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	DetachFromControllerPendingDestroy();
+
+	if (PrimaryWeapon) {
+		WeaponUnEquip(PrimaryWeapon);
+	}
+	if (SecondaryWeapon) {
+		WeaponUnEquip(SecondaryWeapon);
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("Died"));
+}
 
 void AMCharacter::OnOverlapBegin(UPrimitiveComponent * OverlappedComp, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {

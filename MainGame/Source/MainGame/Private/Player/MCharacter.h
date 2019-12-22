@@ -44,6 +44,7 @@ protected:
 	void WeaponReloadStart();
 	void WeaponReloadEnd();
 
+
 	UFUNCTION()
 	void OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	UFUNCTION()
@@ -55,11 +56,11 @@ protected:
 		class USpringArmComponent* CameraBoom;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Structure)
 		class UCameraComponent* Camera;
+	UPROPERTY(EditDefaultsOnly, Category = Health)
+		class UActorHealthComponent* HealthComponent;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Movement)
 		float SpeedMultiplier;
-	//TODO delete this
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Movement)
-		bool Test;
 
 	bool bOverlapedWithWeapon; //Checks if Overlaping happed with an weapon or not
 	
@@ -81,6 +82,12 @@ protected:
 		bool Reloading;
 	FTimerHandle ReloadTime;
 
+
+	//Events
+	UPROPERTY(BlueprintReadOnly, Category = Events)
+		bool bDied;
+
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -88,6 +95,8 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	
+
+	//Event
+	void Death();
 
 };

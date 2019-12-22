@@ -16,7 +16,7 @@ public:
 	AMweapon();
 
 
-	UPROPERTY(EditAnywhere,  Category = Structure)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Structure)
 		class UStaticMeshComponent* WeaponMesh;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Structure)
@@ -43,6 +43,7 @@ public:
 	void FireProjectile();
 
 
+
 	UPROPERTY(EditDefaultsOnly, Category = Action)
 		bool bPicked;
 	UPROPERTY(EditAnywhere, Category = Type)
@@ -59,6 +60,7 @@ public:
 		bool bAutomaticFire;
 	UPROPERTY(EditAnywhere, Category = Fire)
 		float FireRate;
+
 	FTimerHandle TimeBetweenShots;
 
 	UPROPERTY(EditDefaultsOnly, Category = Fire)
@@ -66,7 +68,11 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = Fire)
 		class USoundBase* FireSound;
 
-	UPROPERTY(EditAnywhere, Category = Fire)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Fire)
 		class AMAmmoProjectile* Bullet;
+	
+
+	UPROPERTY(EditDefaultsOnly, Category = Fire)
+		TSubclassOf<AMAmmoProjectile> BulletClass;
 
 };

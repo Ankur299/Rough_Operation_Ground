@@ -11,6 +11,8 @@
 #include "Sound/SoundBase.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Private/Weapons/MAmmoProjectile.h"
+#include "Components/SceneComponent.h"
+#include "Engine/World.h"
 
 #include "DrawDebugHelpers.h" //TODO #remove this after  debugging
 
@@ -46,9 +48,6 @@ void AMweapon::BeginPlay()
 	Super::BeginPlay();
 	WeaponMesh->SetSimulatePhysics(true);
 
-	if (Bullet) {
-		Bullet->Projectile->InitialSpeed = 2500.f;
-	}
 }
 
 void AMweapon::Tick(float DeltaTime)
@@ -56,7 +55,9 @@ void AMweapon::Tick(float DeltaTime)
 	/*if (Bullet) {
 		UE_LOG(LogTemp, Error, TEXT("initial speed %f"), Bullet->Projectile->InitialSpeed);
 	}*/
+
 	//TODO tick to be disabled
+	
 }
 
 void AMweapon::PlayEffects() {
@@ -68,11 +69,38 @@ void AMweapon::PlayEffects() {
 	}
 }
 
+void AMweapon::FireProjectile()
+{
+	AActor* MyOwner;
+	MyOwner = GetOwner();
+	if (BulletClass && MyOwner) {
+
+		FVector EyeLocation;
+		FRotator EyeRotation;
+		FVector MuzzleLocation;
+
+		MyOwner->GetActorEyesViewPoint(EyeLocation, EyeRotation);
+		MuzzleLocation = WeaponMesh->GetSocketLocation("Muzzle");
+
+
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+		
+		UE_LOG(LogTemp, Error, TEXT("Spawn Here Bullet"));
+
+		//TODO spawn bullet here
+		Bullet = GetWorld()->SpawnActor<AMAmmoProjectile>(BulletClass, MuzzleLocation, EyeRotation, SpawnParams);
+		
+		Bullet->SelfDestroy();
+	}
+}
+
 void AMweapon::Fire()
 {
 	if (AmmoOnWeapon > 0) {
 
 		PlayEffects();
+		FireProjectile();
 
 		UE_LOG(LogTemp, Warning, TEXT("Firing"));
 		UE_LOG(LogTemp, Warning, TEXT("%d /  %d"), AmmoOnWeapon, AvailableAmmo);

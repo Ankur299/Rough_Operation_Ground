@@ -14,11 +14,18 @@ class AMAmmoProjectile : public AActor
 public:	
 	// Sets default values for this actor's properties
 	AMAmmoProjectile();
+	void SelfDestroy();
+	void CallDestroy();
+
+	UFUNCTION(BlueprintCallable)
+	void HandleHit(AActor* SelfActor, AActor* OtherActor, FVector NormalImpulse, const FHitResult& Hit);
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Movement)
 	class UProjectileMovementComponent* Projectile;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Movement)
 	class UStaticMeshComponent* Bulletmesh;
+
+	FTimerHandle DestroyBullet;
 
 
 protected:
